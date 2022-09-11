@@ -130,7 +130,7 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
-    @app.route('/search', methods=['POST'])
+    @app.route('/search/questions', methods=['POST'])
     def search_questions():
         try:
             search_term = request.get_json().get('searchTerm')
@@ -149,7 +149,6 @@ def create_app(test_config=None):
             'difficulty': question.difficulty
             } for question in questions]
 
-            print('success')
             return jsonify({
                 'success': True,
                 'questions' : formatted_questions,
@@ -189,15 +188,37 @@ def create_app(test_config=None):
     and shown whether they were correct or not.
     """
     @app.route('/quizzes', methods=['POST'])
-    def get_questions_to_play():
-        body = request.get_json()
-        prev_ques = body.get('previous_questions', None)
-        category = body.get('quiz_category', None)
-        questions = Question.query.all()
-        question = questions[0]
-        while any(question in prev_ques.question):
-            n = random.randint(0, len(questions))
-            question = questions[n]
+    def get_question_for_quiz():
+        try:
+            body = request.get_json()
+            prev_ques = body.get('previous_questions', None)
+    
+            current_category = body.get('quiz_category', None)
+            
+            current_category = int(current_category['id']) + 1
+            
+            
+            if current_category is not None:
+                questions = Question.query.filter_by(category=current_category)
+                print(questions)
+                total_length = questions.count()
+            else:
+                questions = Question.query.all()
+                total_length = len(questions)
+            prev_length = len(prev_ques)
+        
+            question = questions[0].format()
+            i = 0
+            if prev_ques is not None and  prev_length < total_length:
+                while item_is_in_list(question['id'], prev_ques) and i <= total_length:
+                    n = random.randint(0, total_length-1)
+                    question = questions[n].format()
+                    i = i + 1
+        except:
+            print(prev_ques)
+            print(current_category)
+            print(sys.exc_info())
+            abort(422)
 
         return jsonify({
             'question' : question
@@ -207,6 +228,14 @@ def create_app(test_config=None):
     Create error handlers for all expected errors
     including 404 and 422.
     """
+    def item_is_in_list(id, items):
+        # items is a collection of maps
+        # id is an integer
+        is_in_item = False
+        for item in items:
+            if item == id:
+                is_in_item = True
+        return is_in_item
 
     @app.errorhandler(404)
     def not_found(error):
@@ -225,7 +254,7 @@ def create_app(test_config=None):
         }), 422
 
     @app.errorhandler(400)
-    def unprocessable(error):
+    def bad_request(error):
         return jsonify({
             "Success": False,
             "error": 400,
@@ -233,7 +262,7 @@ def create_app(test_config=None):
         }), 400
 
     @app.errorhandler(405)
-    def unprocessable(error):
+    def method_not_allowed(error):
         return jsonify({
             "Success": False,
             "error": 405,
