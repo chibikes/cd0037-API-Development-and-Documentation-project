@@ -35,6 +35,18 @@ Populate the database using the `trivia.psql` file provided. From the `backend` 
 ```bash
 psql trivia < trivia.psql
 ```
+### Set up environmental variables
+Create a `.env` file which will be used to load up your database username, password and name
+
+Inside the `.env` file put
+
+```
+DB_NAME=<your database name>
+DB_USER=<your database username>
+DB_PASSWORD=<your database password>
+DB_TEST_NAME=<your database used for testing>
+
+```
 
 ### Run the Server
 
