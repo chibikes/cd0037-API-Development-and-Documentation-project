@@ -34,7 +34,8 @@ class QuizView extends Component {
     });
   }
 
-  selectCategory = ({ type, id = 0 }) => {
+  selectCategory = ({ type, id = 1000 }) => {
+
     this.setState({ quizCategory: { type, id } }, this.getNextQuestion);
   };
 
@@ -43,11 +44,13 @@ class QuizView extends Component {
   };
 
   getNextQuestion = () => {
+    var quizCat = {"id": parseInt(this.state.quizCategory.id) + 1}
+    if(quizCat.id >= 1000) {quizCat = {}}
     const previousQuestions = [...this.state.previousQuestions];
     if (this.state.currentQuestion.id) {
       previousQuestions.push(this.state.currentQuestion.id);
     }
-
+    
     $.ajax({
       url: '/quizzes', //TODO: update request URL
       type: 'POST',
@@ -55,7 +58,7 @@ class QuizView extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         previous_questions: previousQuestions,
-        quiz_category: this.state.quizCategory,
+        quiz_category: quizCat,
       }),
       xhrFields: {
         withCredentials: true,
