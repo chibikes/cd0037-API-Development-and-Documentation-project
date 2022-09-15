@@ -245,7 +245,7 @@ Sample Response:
 `DELETE '/api/v1/questions/${question_id}'`
 
 General:
-Deletes a question with a given id of question_id. Returns a success value of true if the question was successfully deleted.
+Deletes a question with a given id of question_id. Returns a success value of true if the question was successfully deleted and the id of the given question.
 
 Sample Request: curl -X DELETE http://127.0.0.1:5000/questions/1
 
@@ -253,7 +253,8 @@ Sample Response:
 
 ```json
 {
-    "success": true
+    "success": true,
+    "id": 1,
 }
 
 ```
