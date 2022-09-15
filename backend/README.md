@@ -104,9 +104,8 @@ You will need to provide detailed documentation of your API endpoints including 
 **API DOCUMENTATION**
 
 Getting Started
-Base URL: The main url is located at http://127.0.0.1:5000/. Note that this is for development purposes only
-
-Authentication: There are no authentication keys for this api
+Base URL: The main url is located at http://127.0.0.1:5000/. Note that this is for development purposes only.
+There are no authentication keys for this api
 
 Error Handling
 
